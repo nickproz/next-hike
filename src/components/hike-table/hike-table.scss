@@ -1,0 +1,18 @@
+.hike-table__container {
+  td {
+    padding: 0 !important;
+
+    &:first-child {
+      border-width: 1px !important;
+    }
+
+    &:not(:first-child) {
+      border: none !important;
+    }
+  }
+}
+
+.hike-table-cell {
+  padding: 3px 10px;
+  border: 1px solid #e9ebed;
+}
