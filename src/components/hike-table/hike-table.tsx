@@ -1,4 +1,4 @@
-import { FunctionComponent, useContext } from 'react';
+import { FunctionComponent } from 'react';
 import { PropertyFilter, Table, TableProps } from '@cloudscape-design/components';
 import { Hike } from '@/models/hike/hike.interface.ts';
 import { HikeTableNumberCellComponent } from './hike-table-number-cell.tsx';
@@ -6,25 +6,27 @@ import { PropertyFilterOperator, useCollection } from '@cloudscape-design/collec
 import { HikeTableCellComponent } from './hike-table-cell.tsx';
 import { HikeTableAreaCellComponent } from './hike-table-area-cell.tsx';
 import { LinkComponent } from '@/components/reusable-components/link/link.tsx';
-import { AppData } from '@/app/app.context.tsx';
+import { useHikes } from '@/hooks/data/use-hikes.tsx';
 
-export const HEADER_LABEL_HIKE: string = 'Hike';
-export const HEADER_LABEL_CLASS: string = 'Class';
-export const HEADER_LABEL_MILES: string = 'Miles';
-export const HEADER_LABEL_GAIN: string = 'Gain';
-export const HEADER_LABEL_ELEVATION: string = 'Elevation';
-export const HEADER_LABEL_DRIVE_TIME: string = 'Drive Time (min)';
-export const HEADER_LABEL_AREA: string = 'Area';
-export const HEADER_LABEL_ALL_TRAILS_RATING: string = 'AllTrails Rating';
-export const HEADER_LABEL_TRAILHEAD: string = 'Trailhead';
+export enum HikeLabel {
+  Hike = 'Hike',
+  Class = 'Class',
+  Miles = 'Miles',
+  Gain = 'Gain (ft)',
+  Elevation = 'Elevation (ft)',
+  DriveTime = 'Drive time (min)',
+  Area = 'Area',
+  AllTrailsRating = 'AllTrails rating',
+  Trailhead = 'Trailhead',
+}
 
 const DEFAULT_NUM_OPERATORS: PropertyFilterOperator[] = ['<', '=', '>'];
 const DEFAULT_TEXT_OPERATORS: PropertyFilterOperator[] = [':', '='];
 
 // TODO: figure out why scroll borders overlap sticky first column
 const HikeTableComponent: FunctionComponent = () => {
-  const { hikes } = useContext(AppData).data;
-  const { isLoading } = useContext(AppData);
+  const { data, isLoading } = useHikes();
+  const hikes = data || [];
 
   const { items, collectionProps, propertyFilterProps } = useCollection(hikes, {
     sorting: {
@@ -41,56 +43,56 @@ const HikeTableComponent: FunctionComponent = () => {
         {
           key: 'hike',
           operators: DEFAULT_TEXT_OPERATORS,
-          propertyLabel: HEADER_LABEL_HIKE,
-          groupValuesLabel: HEADER_LABEL_HIKE,
+          propertyLabel: HikeLabel.Hike,
+          groupValuesLabel: HikeLabel.Hike,
         },
         {
           key: 'class',
           operators: DEFAULT_NUM_OPERATORS,
-          propertyLabel: HEADER_LABEL_CLASS,
-          groupValuesLabel: HEADER_LABEL_CLASS,
+          propertyLabel: HikeLabel.Class,
+          groupValuesLabel: HikeLabel.Class,
         },
         {
           key: 'miles',
           operators: DEFAULT_NUM_OPERATORS,
-          propertyLabel: HEADER_LABEL_MILES,
-          groupValuesLabel: HEADER_LABEL_MILES,
+          propertyLabel: HikeLabel.Miles,
+          groupValuesLabel: HikeLabel.Miles,
         },
         {
           key: 'gain',
           operators: DEFAULT_NUM_OPERATORS,
-          propertyLabel: HEADER_LABEL_GAIN,
-          groupValuesLabel: HEADER_LABEL_GAIN,
+          propertyLabel: HikeLabel.Gain,
+          groupValuesLabel: HikeLabel.Gain,
         },
         {
           key: 'elevation',
           operators: DEFAULT_NUM_OPERATORS,
-          propertyLabel: HEADER_LABEL_ELEVATION,
-          groupValuesLabel: HEADER_LABEL_ELEVATION,
+          propertyLabel: HikeLabel.Elevation,
+          groupValuesLabel: HikeLabel.Elevation,
         },
         {
           key: 'driveTimeMins',
           operators: DEFAULT_NUM_OPERATORS,
-          propertyLabel: HEADER_LABEL_DRIVE_TIME,
-          groupValuesLabel: HEADER_LABEL_DRIVE_TIME,
+          propertyLabel: HikeLabel.DriveTime,
+          groupValuesLabel: HikeLabel.DriveTime,
         },
         {
           key: 'area',
           operators: DEFAULT_TEXT_OPERATORS,
-          propertyLabel: HEADER_LABEL_AREA,
-          groupValuesLabel: HEADER_LABEL_AREA,
+          propertyLabel: HikeLabel.Area,
+          groupValuesLabel: HikeLabel.Area,
         },
         {
           key: 'allTrailsRating',
           operators: DEFAULT_NUM_OPERATORS,
-          propertyLabel: HEADER_LABEL_ALL_TRAILS_RATING,
-          groupValuesLabel: HEADER_LABEL_ALL_TRAILS_RATING,
+          propertyLabel: HikeLabel.AllTrailsRating,
+          groupValuesLabel: HikeLabel.AllTrailsRating,
         },
         {
           key: 'trailhead',
           operators: DEFAULT_TEXT_OPERATORS,
-          propertyLabel: HEADER_LABEL_TRAILHEAD,
-          groupValuesLabel: HEADER_LABEL_TRAILHEAD,
+          propertyLabel: HikeLabel.Trailhead,
+          groupValuesLabel: HikeLabel.Trailhead,
         },
       ],
     },
@@ -99,7 +101,7 @@ const HikeTableComponent: FunctionComponent = () => {
   function getColumnDefinitions(): TableProps.ColumnDefinition<Hike>[] {
     return [
       {
-        header: HEADER_LABEL_HIKE,
+        header: HikeLabel.Hike,
         cell: (hike: Hike) => (
           <HikeTableCellComponent style={{ border: 'none' }}>
             <LinkComponent href={`/hike/${hike.id}`} variant={'secondary'}>
@@ -110,41 +112,41 @@ const HikeTableComponent: FunctionComponent = () => {
         sortingField: 'hike',
       },
       {
-        header: HEADER_LABEL_CLASS,
+        header: HikeLabel.Class,
         cell: (hike: Hike) => <HikeTableNumberCellComponent value={hike.class} values={hikes.map((h) => h.class)} />,
         sortingField: 'class',
         minWidth: '95px',
       },
       {
-        header: HEADER_LABEL_MILES,
+        header: HikeLabel.Miles,
         cell: (hike: Hike) => <HikeTableNumberCellComponent value={hike.miles} values={hikes.map((h) => h.miles)} />,
         sortingField: 'miles',
         minWidth: '95px',
       },
       {
-        header: HEADER_LABEL_GAIN,
+        header: HikeLabel.Gain,
         cell: (hike: Hike) => <HikeTableNumberCellComponent value={hike.gain} values={hikes.map((h) => h.gain)} />,
         sortingField: 'gain',
       },
       {
-        header: HEADER_LABEL_ELEVATION,
+        header: HikeLabel.Elevation,
         cell: (hike: Hike) => <HikeTableNumberCellComponent value={hike.elevation} values={hikes.map((h) => h.elevation)} />,
         sortingField: 'elevation',
         minWidth: '120px',
       },
       {
-        header: HEADER_LABEL_DRIVE_TIME,
+        header: HikeLabel.DriveTime,
         cell: (hike: Hike) => <HikeTableNumberCellComponent value={hike.driveTimeMins} values={hikes.map((h) => h.driveTimeMins)} />,
         sortingField: 'driveTimeMins',
         minWidth: '170px',
       },
       {
-        header: HEADER_LABEL_AREA,
+        header: HikeLabel.Area,
         cell: (hike: Hike) => <HikeTableAreaCellComponent area={hike.area} />,
         sortingField: 'area',
       },
       {
-        header: HEADER_LABEL_ALL_TRAILS_RATING,
+        header: HikeLabel.AllTrailsRating,
         cell: (hike: Hike) => (
           <HikeTableNumberCellComponent value={hike.allTrailsRating} values={hikes.map((h) => h.allTrailsRating)} isPositiveScale={true} />
         ),
@@ -152,7 +154,7 @@ const HikeTableComponent: FunctionComponent = () => {
         minWidth: '150px',
       },
       {
-        header: HEADER_LABEL_TRAILHEAD,
+        header: HikeLabel.Trailhead,
         cell: (hike: Hike) => <HikeTableCellComponent>{hike.trailhead}</HikeTableCellComponent>,
         sortingField: 'trailhead',
       },

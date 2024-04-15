@@ -1,5 +1,5 @@
 import './gallery-tile.scss';
-import React, { FunctionComponent } from 'react';
+import { FunctionComponent } from 'react';
 import { PhotoWithThumbnail } from '@/models/photo/photo.interface.ts';
 
 export interface Props {
@@ -8,6 +8,7 @@ export interface Props {
 
 // TODO: move to shared component library?
 const GalleryTileComponent: FunctionComponent<Props> = ({ img }: Props) => {
+  console.log('Image!: ', img);
   return <div className={'gallery-tile__img'}></div>;
 };
 

@@ -1,16 +1,11 @@
 import { createContext, FunctionComponent, ReactNode } from 'react';
 import { createSearchParams, useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { Hike } from '@/models/hike/hike.interface.ts';
-import { QueryKey } from '@/models/query-key.enum.ts';
-import { HikeService } from '@/services/hike.service.ts';
 
 export interface Props {
   children: ReactNode;
 }
 
 export interface AppData {
-  hikes: Hike[];
   onNavigate: (url: string, searchParams?: SearchParams, e?: Event) => void;
 }
 
@@ -20,14 +15,15 @@ export interface ContextAsyncData<T> {
   isLoading?: boolean;
 }
 
-export const AppData = createContext<ContextAsyncData<AppData>>(null!);
+export const AppData = createContext<ContextAsyncData<AppData>>({
+  isLoading: true,
+  data: {
+    onNavigate: () => {},
+  },
+});
 
 const AppContextProvider: FunctionComponent<Props> = ({ children }: Props) => {
   const navigate = useNavigate();
-  const { isPending: areHikesLoading, data: hikes } = useQuery<Hike[]>({
-    queryKey: [QueryKey.Hikes],
-    queryFn: HikeService.getHikes,
-  });
 
   function onNavigate(url: string, searchParams?: SearchParams, e?: Event): void {
     // stop link if event is passed
@@ -46,9 +42,8 @@ const AppContextProvider: FunctionComponent<Props> = ({ children }: Props) => {
   return (
     <AppData.Provider
       value={{
-        isLoading: areHikesLoading,
+        isLoading: false,
         data: {
-          hikes: hikes || [],
           onNavigate,
         },
       }}
